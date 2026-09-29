@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Coding 在线刷题平台（OJ）</title>
+<style>
+  :root{--bg:#f4f6fb;--panel:#fff;--ink:#1f2733;--sub:#68738c;--line:#e6eaf2;--brand:#3b6ef6;--brandsoft:#eaf0ff;
+        --ok:#16a34a;--warn:#d97706;--err:#dc2626;--purple:#7c3aed;--code:#0f172a}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:"Segoe UI","Microsoft YaHei",system-ui,sans-serif}
+  .wrap{max-width:1380px;margin:0 auto;padding:18px}
+  header{display:flex;align-items:center;gap:13px;flex-wrap:wrap;margin-bottom:14px}
+  .logo{width:40px;height:40px;border-radius:11px;background:linear-gradient(135deg,#3b6ef6,#8b5cf6);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;box-shadow:0 6px 16px rgba(59,110,246,.28)}
+  h1{font-size:18px;margin:0}.sub{font-size:12.5px;color:var(--sub);margin-top:3px}
+  .badges{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+  .badge{font-size:12px;padding:4px 10px;border-radius:999px;background:var(--brandsoft);color:var(--brand);border:1px solid #d8e2ff}
+  .badge.gray{background:#f1f3f8;color:var(--sub);border-color:#e6eaf2}
+  .grid{display:grid;grid-template-columns:280px minmax(0,1fr) 360px;gap:14px;align-items:start}
+  @media(max-width:1200px){.grid{grid-template-columns:260px minmax(0,1fr)}.col3{grid-column:1/-1}}
+  @media(max-width:860px){.grid{grid-template-columns:1fr}.col3{grid-column:auto}}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:15px;box-shadow:0 6px 20px rgba(31,39,51,.05)}
+  .head{padding:12px 14px;border-bottom:1px solid var(--line);font-size:13.5px;font-weight:600;display:flex;align-items:center;gap:8px}
+  .head i{width:6px;height:14px;border-radius:3px;background:var(--brand);display:inline-block}
+  .plist{max-height:760px;overflow:auto}
+  .pitem{padding:11px 14px;border-bottom:1px solid var(--line);cursor:pointer}
+  .pitem:hover{background:#f7f9ff}
+  .pitem.active{background:var(--brandsoft);border-left:3px solid var(--brand);padding-left:11px}
+  .pitem .t{font-size:13.5px;font-weight:600}
+  .pitem .m{font-size:11.5px;color:var(--sub);margin-top:4px;display:flex;gap:6px;align-items:center}
+  .diff{font-size:11px;padding:1px 7px;border-radius:5px}
+  .diff.入门{background:#e8f7ee;color:#0f7a3d}
+  .diff.中等{background:#fdf1e3;color:#9a5b00}
+  .diff.困难{background:#fdeaea;color:#b91c1c}
+  .tag{font-size:11px;color:var(--sub);background:#f1f3f8;padding:1px 7px;border-radius:5px}
+  .detail{padding:14px 16px}
+  .ptitle{font-size:17px;font-weight:700;margin:0 0 8px}
+  .desc{font-size:13.5px;line-height:1.75;white-space:pre-wrap}
+  .block{margin-top:12px;font-size:13px;line-height:1.7}
+  .block b{font-size:12.5px;color:var(--sub);font-weight:600;display:block;margin-bottom:3px}
+  .sample{background:#f7f9fc;border:1px solid var(--line);border-radius:9px;padding:9px 11px;margin-top:6px;font-family:ui-monospace,Consolas,monospace;font-size:12.5px;white-space:pre-wrap}
+  .editorbar{display:flex;gap:9px;align-items:center;padding:10px 14px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);flex-wrap:wrap}
+  select{padding:6px 9px;border:1px solid var(--line);border-radius:8px;font-size:12.5px;background:#fff}
+  .btn{padding:7px 15px;border:0;border-radius:9px;background:var(--brand);color:#fff;font-size:13px;font-weight:600;cursor:pointer}
+  .btn:hover{background:#2f5fe0}.btn:disabled{opacity:.5;cursor:not-allowed}
+  .btn.ghost{background:#eef2fb;color:#3b5bdb}
+  .editor{width:100%;height:300px;border:0;outline:none;resize:vertical;padding:12px 14px;background:var(--code);color:#e6edf7;
+          font-family:ui-monospace,Consolas,"Courier New",monospace;font-size:13px;line-height:1.6;tab-size:2}
+  .result{padding:13px 15px}
+  .status{font-size:15px;font-weight:700;padding:9px 12px;border-radius:10px;text-align:center;margin-bottom:11px}
+  .status.Accepted{background:#e8f7ee;color:#0f7a3d}
+  .status.Wrong\ Answer{background:#fdeaea;color:#b91c1c}
+  .status.CE,.status.RE,.status.TLE,.status.MLE,.status.System\ Error{background:#fdf1e3;color:#9a5b00}
+  .status.Pending,.status.Judging{background:#eef2fb;color:#3b5bdb}
+  .kv{display:flex;justify-content:space-between;font-size:12.5px;color:var(--sub);padding:4px 0}
+  .kv b{color:var(--ink)}
+  .case{border:1px solid var(--line);border-radius:9px;padding:8px 10px;margin-top:7px;font-size:12px}
+  .case .h{font-weight:600;font-size:12px;margin-bottom:4px}
+  .case pre{margin:3px 0;background:#f7f9fc;border-radius:6px;padding:5px 7px;overflow:auto;font-size:11.5px;font-family:ui-monospace,Consolas,monospace}
+  .recent{margin-top:14px}
+  .ritem{display:flex;justify-content:space-between;font-size:12px;padding:6px 0;border-bottom:1px dashed var(--line)}
+  .st{font-weight:600}
+  .st.Accepted{color:var(--ok)}.st.Wrong\ Answer{color:var(--err)}.st.CE,.st.RE,.st.TLE,.st.MLE{color:var(--warn)}
+  .empty{color:#9aa4b8;font-size:12.5px;padding:8px 0}
+  footer{text-align:center;color:#9aa4b8;font-size:12px;padding:16px 0 4px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo">&lt;/&gt;</div>
+    <div>
+      <h1>Coding 在线刷题平台（OJ）</h1>
+      <div class="sub">题库浏览 · 在线编码 · 异步判题 · 沙箱隔离执行</div>
+    </div>
+    <div class="badges">
+      <span class="badge" id="bProb">题目 0</span>
+      <span class="badge gray" id="bPy">Python 检测中</span>
+      <span class="badge gray">提交 <b id="bTotal">0</b></span>
+      <span class="badge gray">队列 <b id="bQueue">0</b></span>
+    </div>
+  </header>
+
+  <div class="grid">
+    <div class="card col1">
+      <div class="head"><i></i>题库列表</div>
+      <div class="plist" id="plist"><div class="empty" style="padding:12px">加载中…</div></div>
+    </div>
+
+    <div class="card col2">
+      <div class="detail" id="detail"><div class="empty">← 请选择左侧一道题目</div></div>
+      <div class="editorbar">
+        <select id="lang">
+          <option value="javascript">JavaScript (Node)</option>
+          <option value="python">Python 3</option>
+        </select>
+        <button class="btn ghost" id="reset">重置模板</button>
+        <span style="font-size:12px;color:#68738c;margin-left:auto" id="hint">提交后在右侧查看判题结果</span>
+        <button class="btn" id="submit">提交判题</button>
+      </div>
+      <textarea class="editor" id="code" spellcheck="false" placeholder="在此编写代码…"></textarea>
+    </div>
+
+    <div class="card col3">
+      <div class="head"><i></i>判题结果</div>
+      <div class="result" id="result"><div class="empty">尚未提交</div></div>
+      <div class="head" style="border-top:1px solid var(--line)"><i></i>最近提交</div>
+      <div class="result recent" id="recent"><div class="empty">暂无记录</div></div>
+    </div>
+  </div>
+  <footer>零依赖 Node 服务 · JS 使用 worker_threads + vm 沙箱（限时 2s / 限内存 64MB）· 数据为演示题库</footer>
+</div>
+
+<script>
+const $=s=>document.querySelector(s);
+let cur=null, curProblem=null, pollTimer=null;
+
+async function loadList(){
+  const j=await (await fetch('/api/problems')).json();
+  $('#bProb').textContent='题目 '+j.problems.length;
+  $('#plist').innerHTML=j.problems.map(p=>`
+    <div class="pitem" data-id="${p.id}">
+      <div class="t">${p.id}. ${p.title}</div>
+      <div class="m"><span class="diff ${p.difficulty}">${p.difficulty}</span>${p.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+    </div>`).join('');
+  document.querySelectorAll('.pitem').forEach(el=>el.onclick=()=>select(Number(el.dataset.id)));
+  select(j.problems[0].id);
+}
+async function select(id){
+  document.querySelectorAll('.pitem').forEach(e=>e.classList.toggle('active', Number(e.dataset.id)===id));
+  const p=await (await fetch('/api/problem?id='+id)).json();
+  curProblem=p;
+  $('#detail').innerHTML=`
+    <div class="ptitle">${p.id}. ${p.title}</div>
+    <div class="m" style="margin-bottom:10px"><span class="diff ${p.difficulty}">${p.difficulty}</span> ${p.tags.map(t=>`<span class="tag">${t}</span>`).join(' ')}</div>
+    <div class="desc">${p.description}</div>
+    <div class="block"><b>输入格式</b>${p.inputFormat}</div>
+    <div class="block"><b>输出格式</b>${p.outputFormat}</div>
+    <div class="block"><b>样例</b>
+      ${p.samples.map(s=>`<div class="sample">输入：${s.input.replace(/\n/g,' ⏎ ')}\n输出：${s.output}</div>`).join('')}
+    </div>`;
+  $('#code').value=(p.starter[$('#lang').value]||'');
+}
+$('#lang').onchange=()=>{ if(curProblem) $('#code').value=curProblem.starter[$('#lang').value]||''; };
+$('#reset').onclick=()=>{ if(curProblem) $('#code').value=curProblem.starter[$('#lang').value]||''; };
+
+$('#submit').onclick=async()=>{
+  if(!curProblem) return;
+  const code=$('#code').value;
+  if(!code.trim()){ alert('代码不能为空'); return; }
+  $('#submit').disabled=true; $('#hint').textContent='已加入判题队列…';
+  $('#result').innerHTML='<div class="status Judging">Judging…</div><div class="empty">正在排队判题，请稍候</div>';
+  try{
+    const r=await (await fetch('/api/submit',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({problemId:curProblem.id,language:$('#lang').value,code})})).json();
+    if(r.error){ $('#result').innerHTML=`<div class="status RE">${r.error}</div>`; $('#submit').disabled=false; return; }
+    poll(r.id);
+  }catch(e){ $('#result').innerHTML=`<div class="status RE">网络错误：${e.message}</div>`; $('#submit').disabled=false; }
+};
+function poll(id){
+  clearInterval(pollTimer);
+  pollTimer=setInterval(async()=>{
+    try{
+      const s=await (await fetch('/api/submission?id='+id)).json();
+      renderResult(s);
+      if(s.status!=='Pending'&&s.status!=='Judging'){ clearInterval(pollTimer); $('#submit').disabled=false; $('#hint').textContent='判题完成，可继续提交'; loadRecent(); loadStats(); }
+    }catch(e){}
+  },400);
+}
+function renderResult(s){
+  const label={Pending:'等待判题',Judging:'判题中',Accepted:'✅ Accepted 通过', 'Wrong Answer':'❌ Wrong Answer 答案错误',
+    CE:'⚠️ Compile Error 编译错误',RE:'⚠️ Runtime Error 运行时错误',TLE:'⏱ Time Limit Exceeded 超时',MLE:'💾 Memory Limit Exceeded 超内存'}[s.status]||s.status;
+  let html=`<div class="status ${s.status}">${label}</div>`;
+  html+=`<div class="kv"><span>通过用例</span><b>${s.passed??0} / ${s.total??'-'}</b></div>`;
+  html+=`<div class="kv"><span>判题耗时</span><b>${s.timeMs!=null?s.timeMs+' ms':'-'}</b></div>`;
+  html+=`<div class="kv"><span>语言</span><b>${s.language==='python'?'Python 3':'JavaScript'}</b></div>`;
+  if(s.message) html+=`<div class="kv"><span>信息</span><b style="font-size:11.5px;text-align:right">${s.message}</b></div>`;
+  if(s.results?.length){
+    s.results.forEach(c=>{
+      html+=`<div class="case"><div class="h">用例 ${c.index} · <span class="st ${c.status}">${c.status}</span></div>
+        <pre>输入：${String(c.input).replace(/\n/g,' ⏎ ')}</pre>
+        <pre>期望：${c.expected}</pre>
+        <pre>实际：${c.got===''?'(空)':c.got}</pre>
+        ${c.message?`<pre>错误：${c.message}</pre>`:''}</div>`;
+    });
+  }
+  $('#result').innerHTML=html;
+}
+async function loadRecent(){
+  const j=await (await fetch('/api/submissions')).json();
+  if(!j.submissions.length){ $('#recent').innerHTML='<div class="empty">暂无记录</div>'; return; }
+  $('#recent').innerHTML=j.submissions.map(s=>`
+    <div class="ritem"><span>#${s.problemId} ${s.language==='python'?'Py':'JS'}</span>
+    <span class="st ${s.status}">${s.status}</span></div>`).join('');
+}
+async function loadStats(){
+  const j=await (await fetch('/api/stats')).json();
+  $('#bTotal').textContent=j.total; $('#bQueue').textContent=j.queue;
+}
+async function init(){
+  const h=await (await fetch('/api/health')).json();
+  $('#bPy').textContent=h.python?('Python 可用'):'Python 不可用（仅 JS）';
+  await loadList(); await loadRecent(); await loadStats();
+  setInterval(loadStats,4000);
+}
+init();
+</script>
+</body>
+</html>
