@@ -2,6 +2,7 @@
 
 面向编程学习与竞赛的在线刷题系统：浏览题目、在线编码、提交判题、查看结果。
 
+> **在线演示**：https://235967fdb5b644bd8e4f5c15a5f58ef7.app.workbuddy.host
 > **零依赖**：仅用 Node.js 内置模块，`node server.js` 即可运行，无需数据库 / Redis / Docker。
 
 ## 判题流程
